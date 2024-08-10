@@ -1,14 +1,10 @@
 package com.lisha.Api.Gateway.utilities;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.stereotype.Component;
@@ -21,26 +17,13 @@ public class JwtUtil {
 
     //Add the method to validate if the JWT token is valid or not
     public static final String SECRET = PropertiesReader.getProperty(StringConstants.SECRET);
-    @Value("${spring.app.jwtSecret}")
-    private String jwtSecret;
-
-    @Value("${spring.app.jwtExpirationMs}")
-    private int jwtExpirationMs;
 
     public String getJwtFromHeader(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+        String bearerToken = request.getHeader(StringConstants.AUTHORIZATION);
+        if (bearerToken != null && bearerToken.startsWith(StringConstants.BEARER_HEADER)) {
             return bearerToken.substring(7); // Remove Bearer prefix
         }
         return null;
-    }
-
-
-    public String getUserNameFromJwtToken(String token) {
-        return Jwts.parser()
-                .verifyWith((SecretKey) key())
-                .build().parseSignedClaims(token)
-                .getPayload().getSubject();
     }
 
     private Key key() {
@@ -56,6 +39,6 @@ public class JwtUtil {
         } catch (ExpiredJwtException ex) {
             throw new CredentialsExpiredException(StringConstants.TOKEN_EXPIRED, ex);
         }
-    }
+
     }
 }
