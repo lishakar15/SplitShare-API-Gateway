@@ -9,6 +9,8 @@ spring:
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user/**
+          filters:
+            - name: JwtAuthenticationFilter
   application:
     name: API-Gateway
   boot:
