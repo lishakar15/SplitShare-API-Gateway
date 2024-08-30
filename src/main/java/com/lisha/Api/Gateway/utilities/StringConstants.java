@@ -10,4 +10,9 @@ public class StringConstants {
     public static final String SECRET = "SECRET";
     public static final String UNAUTHORIZED_ACCESS = "Unauthorized access";
     public static final String TOKEN_EXPIRED = "Token expired";
+    public static final String AUTHORIZATION = "Authorization";
+    public static final String BEARER_HEADER  = "Bearer ";
+    public static final String HEADER_NOT_FOUND = "Header not found";
+
+    public static final String EMPTY_STRING = "";
 }
