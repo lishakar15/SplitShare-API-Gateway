@@ -1,3 +1,5 @@
+server:
+  port: 8085
 spring:
   cloud:
     gateway:
@@ -5,12 +7,30 @@ spring:
         locator:
           enabled: true
       routes:
+        # Route for User Service
         - id: USER-SERVICE
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/user/**
+            - Path=/user/**,/group/**
           filters:
             - name: JwtAuthenticationFilter
+        # Route for Expense Service
+        - id: EXPENSE-SERVICE
+          uri: lb://EXPENSE-SERVICE
+          predicates:
+            - Path=/expense/**,/balance/**,/comments/**,/settlement/**
+          filters:
+            - name: JwtAuthenticationFilter
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:3000"
+            allowedMethods:
+              - GET
+              - POST
+            allowedHeaders:
+              - content-type
   application:
     name: API-Gateway
   boot:
@@ -31,6 +51,3 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka
     fetch-registry: true
-
-server:
-  port: 8085

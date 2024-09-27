@@ -47,7 +47,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
     @Override
     public GatewayFilter apply(Config config) {
         return ((exchange, chain) -> {
-            if (routeValidator.isSecured.test(exchange.getRequest())) {
+            if (!routeValidator.isSecured.test(exchange.getRequest())) {
                 try {
                     if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
                         throw new HeaderException(StringConstants.HEADER_NOT_FOUND);
