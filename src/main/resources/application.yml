@@ -29,6 +29,9 @@ spring:
             allowedMethods:
               - GET
               - POST
+              - DELETE
+              - PUT
+              - OPTIONS
             allowedHeaders:
               - content-type
   application:
