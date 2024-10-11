@@ -21,6 +21,13 @@ spring:
             - Path=/expense/**,/balance/**,/comments/**,/settlement/**
           filters:
             - name: JwtAuthenticationFilter
+        # Route for Orchestrate Service
+        - id: ORCHESTRATE-SERVICE
+          uri: lb://ORCHESTRATE-SERVICE
+          predicates:
+            - Path=/activity/**
+          filters:
+            - name: JwtAuthenticationFilter
       globalcors:
         corsConfigurations:
           '[/**]':
