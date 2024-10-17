@@ -1,8 +1,11 @@
 package com.lisha.Api.Gateway.filter;
 
+import ch.qos.logback.core.hook.DelayingShutdownHook;
 import com.lisha.Api.Gateway.exception.HeaderException;
 import com.lisha.Api.Gateway.utilities.JwtUtil;
 import com.lisha.Api.Gateway.utilities.StringConstants;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.CredentialsExpiredException;
+import org.springframework.security.task.DelegatingSecurityContextAsyncTaskExecutor;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -60,11 +64,22 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
                     jwtUtil.validateJwtToken(jwtToken);
 
                 } catch (BadCredentialsException | HeaderException | CredentialsExpiredException exception) {
-                    return Mono.defer(() -> {
-                        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                        exchange.getResponse().getHeaders().add("Error-Message", exception.getMessage());
-                        return exchange.getResponse().setComplete();
-                    });
+                    if(routeValidator.isInviteExchange.test(exchange.getRequest()))
+                    {
+                        return Mono.defer(() -> {
+                            exchange.getResponse().setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
+                            exchange.getResponse().getHeaders().add("Error-Message", "Invalid or expired invite");
+                            return exchange.getResponse().setComplete();
+                        });
+                    }
+                    else {
+                        return Mono.defer(() -> {
+                            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                            exchange.getResponse().getHeaders().add("Error-Message", exception.getMessage());
+                            return exchange.getResponse().setComplete();
+                        });
+                    }
+
                 }
             }
             return chain.filter(exchange);

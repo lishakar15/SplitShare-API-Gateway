@@ -25,7 +25,7 @@ spring:
         - id: ORCHESTRATE-SERVICE
           uri: lb://ORCHESTRATE-SERVICE
           predicates:
-            - Path=/activity/**
+            - Path=/activity/**,/invite/**
           filters:
             - name: JwtAuthenticationFilter
       globalcors:

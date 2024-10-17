@@ -13,9 +13,19 @@ public class RouteValidator {
             "/user/register-user",
             "/user/login-user",
             "/user/contact-support",
-            "/user/logout"
+            "/user/logout",
+            "/user/invite-link"
     );
+    public static final List<String> inviteEndPoints = List.of(
+            "user/accept-invite",
+            "/group/join-group"
+    );
+
 
     public Predicate<ServerHttpRequest> isSecured =
             request -> openApiEndpoints.stream().noneMatch(uri -> request.getURI().getPath().contains(uri));
+
+    public Predicate<ServerHttpRequest> isInviteExchange =
+            request -> inviteEndPoints.stream().anyMatch(uri -> request.getURI().getPath().contains(uri));
+
 }
